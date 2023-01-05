@@ -1,17 +1,66 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import ReactDOM from 'react-dom';
+import React, { useState } from 'react';
+import { logError } from './error-logging-service';
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
+// Create your ErrorBoundary component here
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+  render(){
+    return this.props.children;
+  }
+}
+
+function LightSwitch({switchNumber = 1}) {
+  const [isOn, setIsOn] = useState(false);
+  const [badSwitchPressed, setBadSwitchPressed] = useState(false);
+
+  if (badSwitchPressed) {
+    throw new Error('Why do we even have this switch?');
+  }
+
+  const bgColor = isOn ? 'white' : 'black';
+  const textColor = isOn ? 'black' : 'white';  
+ 
+  const handleLightSwitchClick = () => {
+    setIsOn(isOn => !isOn);
+  }
+  const handleBadSwitchClick = () => {
+    setBadSwitchPressed(true);
+  }
+ 
+  return (  
+    <div 
+      className="lightSwitch"
+      style={{background : bgColor, color: textColor}}
+    >
+      <button onClick={handleLightSwitchClick}>
+        {switchNumber} – {isOn ? "On" : "Off"}
+      </button>
+      <button onClick={handleBadSwitchClick}>
+        Bad Switch
+      </button>
+    </div>
+  )
+}
+
+function App() {
+  return (
+    <div className="container">
+      <ErrorBoundary>
+        <LightSwitch switchNumber={1}/>
+        <LightSwitch switchNumber={2}/>
+      </ErrorBoundary>
+      <ErrorBoundary>
+        <LightSwitch switchNumber={3}/>
+      </ErrorBoundary>
+      <LightSwitch switchNumber={4}/>
+    </div>
+  )
+}
+
+ReactDOM.render(
+  <App />,
+  document.getElementById('root')
 );
-
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
