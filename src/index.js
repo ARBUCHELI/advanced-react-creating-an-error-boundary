@@ -3,12 +3,16 @@ import React, { useState } from 'react';
 import { logError } from './error-logging-service';
 import { ErrorBoundary } from 'react-error-boundary';
 
-function ErrorFallback() {
+function ErrorFallback({error, resetErrorBoundary}) {
   return (
     <div>
-      <h2>An error was detected!!</h2>
+      <h2>An error was found!</h2>
+      <button onClick={resetErrorBoundary}>
+        Reset
+      </button>
+      <p>Error: {error.message}</p>
     </div>
-  );
+  )
 }
 
 function LightSwitch({switchNumber = 1}) {
@@ -47,11 +51,11 @@ function LightSwitch({switchNumber = 1}) {
 function App() {
   return (
     <div className="container">
-      <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <ErrorBoundary onError = {logError} FallbackComponent={ErrorFallback}>
         <LightSwitch switchNumber={1}/>
         <LightSwitch switchNumber={2}/>
       </ErrorBoundary>
-      <ErrorBoundary FallbackComponent={ErrorFallback}>
+      <ErrorBoundary onError = {logError} FallbackComponent={ErrorFallback}>
         <LightSwitch switchNumber={3}/>
       </ErrorBoundary>
       <LightSwitch switchNumber={4}/>
