@@ -1,26 +1,14 @@
 import ReactDOM from 'react-dom';
 import React, { useState } from 'react';
-// eslint-disable-next-line
 import { logError } from './error-logging-service';
+import { ErrorBoundary } from 'react-error-boundary';
 
-class ErrorBoundary extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {error:null};
-  }
-  static getDerivedStateFromError(error) {
-      return {error};
-  }  
-  render() {
-    if (this.state.error) {
-      return (
-        <div>
-          <h2>An error was detected!</h2>
-        </div>
-      )
-    }
-    return this.props.children;
-  }  
+function ErrorFallback() {
+  return (
+    <div>
+      <h2>An error was detected!!</h2>
+    </div>
+  );
 }
 
 function LightSwitch({switchNumber = 1}) {
@@ -47,7 +35,7 @@ function LightSwitch({switchNumber = 1}) {
       style={{background : bgColor, color: textColor}}
     >
       <button onClick={handleLightSwitchClick}>
-        {switchNumber}) {isOn ? "On" : "Off"}
+        {switchNumber} — {isOn ? "On" : "Off"}
       </button>
       <button onClick={handleBadSwitchClick}>
         Bad Switch
@@ -59,11 +47,11 @@ function LightSwitch({switchNumber = 1}) {
 function App() {
   return (
     <div className="container">
-      <ErrorBoundary>
+      <ErrorBoundary FallbackComponent={ErrorFallback}>
         <LightSwitch switchNumber={1}/>
         <LightSwitch switchNumber={2}/>
       </ErrorBoundary>
-      <ErrorBoundary>
+      <ErrorBoundary FallbackComponent={ErrorFallback}>
         <LightSwitch switchNumber={3}/>
       </ErrorBoundary>
       <LightSwitch switchNumber={4}/>
